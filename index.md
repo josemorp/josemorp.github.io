@@ -1,5 +1,5 @@
-Mòdul 3 de DAM/DAW de Programació. Materials docents.
-Relació d'unitats formatives i nuclis formatius
+# Mòdul 3 de DAM/DAW de Programació. Materials docents.
+## Relació d'unitats formatives i nuclis formatius
 UF 	Hores
 UF1. Programació estructurada 	74
 NF1.1 Programació estructurada 	25
@@ -16,6 +16,7 @@ NF5.1 Excepcions, estructures d'emmagatzematge i fluxos d'informació 	17
 NF5.2 Interfícies gràfiques d'usuari 	18
 UF6. Introducció a la persistència en BD 	29
 NF6.1 Introducció a la persistència en BD 	29
+
 Seqüenciació
 
     Programació estructurada
