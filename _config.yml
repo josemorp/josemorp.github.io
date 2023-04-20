@@ -1,4 +1,5 @@
-theme: jekyll-theme-cayman
+# theme: jekyll-theme-cayman
+remote_theme: pages-themes/modernist@v0.2.0
 title: jmoreno - apunts
 description: Materials docents per a cicles formatius d'Informàtica
 show_downloads: false
