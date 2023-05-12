@@ -11,3 +11,5 @@
 |      | Hores totals del mòdul  | 99         |
 
 [Preparació de l'entorn de treball](entorn_treball.md)
+
+|![](assets/0.1/documentation.jpg) | ![](assets/0.1/documentation2.jpg) |
