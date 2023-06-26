@@ -4,21 +4,21 @@ Anem a desenvolupar pas a pas una aplicació per a la gestió de 'items' amb Lar
 
 Creem el projecte:
 
-   laravel new items
-   cd items
+    laravel new items
+    cd items
 
 Verifiquem que funciona: 
 
-   php artisan serve
+    php artisan serve
 
 i obrim a un navegador la url
 
-   http://localhost:8000
+    http://localhost:8000
 
 El codi de control és a 'app/Http/', directori que conté:
 
-    Controllers: controladors de la lògica de l'aplicació
-    Middleware: controladors de filtre, per exemple, per a autenticació
+* Controllers: controladors de la lògica de l'aplicació
+* Middleware: controladors de filtre, per exemple, per a autenticació
 
 El directori 'app/Providers' conté els serveis de dades.
 
@@ -297,7 +297,7 @@ Ara s'enruta a mètodes (*index*, *list*, …) del controlador *ItemController*.
 
 A la consola, creem el controlador:
 
-   php artisan make:controller ItemController
+    php artisan make:controller ItemController
 
 Ara copiem el codi de les anteriors funcions d'enrutament a les corresponents del controlador. 
 
@@ -331,21 +331,21 @@ class ItemController extends Controller
 
 Cal revisar les configuracions d'accés a dades al fitxer '/config/database.php'. Per simplicitat, comencem treballant amb 'sqlite'. Canviem, doncs, la configuració :
 
-   'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'sqlite'),
 
 Hem de crear manualment el fitxer de la base de dades sqlite:
 
-   touch database/database.sqlite
+    touch database/database.sqlite
 
 Al fitxer .env del directori arrel del projecte cal canviar la connexió a sqlite i esborrar la resta de línies que segueixen i que comencen per DB_:
 
-DB_CONNECTION=sqlite
+   DB_CONNECTION=sqlite
 
 ### Connexió amb mysql
 
 Cal revisar les configuracions d'accés a dades al fitxer '/config/database.php'. Podemm canviar la configuració :
 
- 'default' => env('DB_CONNECTION', 'mysql'),
+  'default' => env('DB_CONNECTION', 'mysql'),
 
 Al fitxer .env del directori arrel del projecte cal canviar la connexió a mysql i esborrar la resta de línies que segueixen i que comencen per DB_:
 ```
@@ -362,7 +362,7 @@ Alternativament, Laravel proporciona eines anomenades '**migrations**' (veure el
 
 Utilizem ***artisan*** per crear una migració de creació de la taula de items:
 
-   php artisan make:migration create_items_table --create=items
+    php artisan make:migration create_items_table --create=items
 
 I modifiquem l'estructura de la taula: 
 
@@ -406,7 +406,7 @@ class CreateItemsTable extends Migration
 
 Per executar la migració:
 
-   php artisan migrate
+    php artisan migrate
 
 Per fer proves, executar consultes, etc, disposem de l'eina **tinker**:
 ```
@@ -430,7 +430,7 @@ public function list() {
 
 ***Elloquent*** usa el Active Record Pattern per generar classes del model associades a les taules:
 
-   php artisan make:model Item
+    php artisan make:model Item
 
 S'ha creat el fitxer '/app/Models/Item.php':
 
@@ -484,7 +484,7 @@ Anem ara a desenvolupar la cerca d'un Item, donat el seu id.
 
 Afegim la ruta:
 
-   Route::get('/items/{item}', [ItemController::class, 'find']);
+    Route::get('/items/{item}', [ItemController::class, 'find']);
 
 Afegim al controlador el mètode *find()*:
 
@@ -505,7 +505,7 @@ public function find($id) {
 }
 ```
 
- Ara creem la vista 'form.blade.php':
+Ara creem la vista 'form.blade.php':
 
 **form.blade.php**
 ```php
@@ -571,7 +571,7 @@ Schema::create('notes', function (Blueprint $table) {
 ```
 Ara executem l'eina ***migrate***:
 
-   php artisan migrate
+    php artisan migrate
 
 Generar un esquema sql de la base de dades. Després, en executar migrate primer carregarà a la base de dades l'esquema generat i després amb –prune s'aplicaran les migracions pendents.
 ```
@@ -582,15 +582,15 @@ php artisan schema:dump --prune
 
 Per saber quines migracions s'han fet (consulta la taula de migracions de la base de dades):
 
-   php artisan migrate:status
+    php artisan migrate:status
 
 Per desfer l'ultima tanda de migracions:
 
-   php artisan migrate:rollback
+    php artisan migrate:rollback
 
 Per desfer totes les migracions efectuades:
 
-   php artisan migrate:reset
+    php artisan migrate:reset
 
 Per desfer i tornar a fer totes les migracions:
 ```
@@ -600,7 +600,7 @@ php artisan migrate:refresh --seed
 ```
 Creem la classe de model per a Note:
 
-   php artisan make:model Note {-m}
+    php artisan make:model Note {-m}
 
 El paràmetre opcional -m força fer la migració en el moment de la creació del model.
 
@@ -695,7 +695,7 @@ App\Models\Item::notes;
 
 Els objectes Note de Item s'emmagatzemen en Item la primera vegada que es consulta aquest Item i no es torna a consultar si no es demana que es refresqui la informació.
 
-   $item = $item->fresh();
+    $item = $item->fresh();
 
 Un cop establertes correctament les relacions entre les entitats, es pot escriure codi com el següent:
 ```
@@ -822,8 +822,8 @@ class NoteFactory extends Factory
 
 Ara podem crear un proveïdor de dades de prova (seeder) per a Item i un altre per a Note:
 
-   php artisan make:seeder ItemsTableSeeder
-   php artisan make:seeder NotesTableSeeder
+    php artisan make:seeder ItemsTableSeeder
+    php artisan make:seeder NotesTableSeeder
 
 Després, cal invocar el seeder des de DatabaseSeedeer.php. 
 
@@ -880,7 +880,7 @@ class DatabaseSeeder extends Seeder
 
 Per poblar la base de dades:
 
-   php artisan db:seed
+    php artisan db:seed
 
 ## Formularis i enviament de dades
 
@@ -939,11 +939,11 @@ Modifiquem la vista que mostra un Item, per afegir un formulari que permeti afeg
 ```
 Afegim la ruta destinació del formulari
 
-   Route::post('/items/{item}/notes', [NoteController::class, 'store']);
+    Route::post('/items/{item}/notes', [NoteController::class, 'store']);
 
 Creem un controlador per a notes.
 
-   php artisan make:controller NoteController
+    php artisan make:controller NoteController
 
 **NoteController.php**
 ```php
@@ -983,7 +983,7 @@ public function addNote(Note $note) {
 
 Afegim una nova ruta per editar notes:
 
-   Route::get('/notes/{note}/edit', [NoteController::class, 'edit']);
+    Route::get('/notes/{note}/edit', [NoteController::class, 'edit']);
 
 Afegim el mètode ***edit()*** a *NoteController*:
 ```php
@@ -1024,7 +1024,7 @@ Al formulari, el codi **@csrf** genera un camp ocult que s'envia amb el formular
 
 Afegim la nova ruta així com el mètode ***update()*** a *NoteController*.
 
-   Route::post('/notes/{note}', [NoteController::class, 'update']);
+    Route::post('/notes/{note}', [NoteController::class, 'update']);
 
 ```php
 public function update(Request $request, Note $note) {
@@ -1039,7 +1039,7 @@ public function update(Request $request, Note $note) {
 
 La classe **Controller**, la qual estenen tots els controladors, conté un mètode **validate()**
 
-   public function validate(Request $request, array $rules, array $messages=[], ...);
+    public function validate(Request $request, array $rules, array $messages=[], ...);
 
 El mètode accepta un array de regles de validació, un array de missatges d'error i altres paràmetres (veure documentació oficial).
 
@@ -1084,11 +1084,11 @@ Route::group(['middleware' => ['web']], function () {
 
 Tot formulari ha de contenir un camp ocult amb el ***csrf→token()***. Afegim, doncs, a tots els formularis:
 
-   {{csrf->field()}}
+    {{csrf->field()}}
 
 o bé
 
-   @csrf
+    @csrf
 
 Ara podem afegir un bloc per mostrar errors a la vista (fitxer form.blade.php) de formulari de Item. 
 

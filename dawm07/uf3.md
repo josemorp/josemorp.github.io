@@ -26,22 +26,22 @@ Extensions de BD a PHP per MySQL (php.net - extensions BD):
 * PDO - interfície abstracta de PHP per accés a BD. Genèric pels diferents SGBD que tinguin controlador PDO. Necessiteu el controlador de MySQL per PDO
 
 Per comprovar si teniu les extensions de php: mysqli i pdo_mysql
-
-   php -m | grep mysql  
-
+```
+php -m | grep mysql  
+```
 A Ubuntu el paquet php-mysql instal·la les extensiones de PHP ext/mysql, ext/mysqli, i pdo_mysql.
 
 Per veure la versió de php instal·lada:
 
-   php -v
+    php -v
 
 Per instal·lar el paquet php-mysql per una versió específica de php, per exemple per la versió 7.2:
 
-   sudo apt install php7.2-mysql
+    sudo apt install php7.2-mysql
 
 Si no indiqueu versió, s'instal·la per l'última versió de php configurada als repositoris d'ubuntu:
 
-   sudo apt install php-mysql    
+    sudo apt install php-mysql    
 
 ## Conceptes bàsics de bases de dades
 
