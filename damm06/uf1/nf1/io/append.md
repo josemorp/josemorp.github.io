@@ -9,7 +9,7 @@ FileWriter(File file, boolean append)
 FileWriter(String fileName, boolean append)
 ```
 
-Si es defineix append=true, el fitxer es crea si no existeix prèviament, i si ja existeix, la informació que s'hi escriu s'afegeix al final del mateix sense sobreescriure l'existent. Es llança *FileNotFoundException* si no es pot obrir o crear el fitxer per algun motiu (manca de permisos o perquè es tracta d'un directory).
+Si es defineix *append=true*, el fitxer es crea si no existeix prèviament, i si ja existeix, la informació que s'hi escriu s'afegeix al final del mateix sense sobreescriure l'existent. Es llança *FileNotFoundException* si no es pot obrir o crear el fitxer per algun motiu (manca de permisos o perquè es tracta d'un directory).
 
 ```java
 import java.io.FileNotFoundException;

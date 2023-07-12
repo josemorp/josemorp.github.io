@@ -9,10 +9,10 @@ Permet fer la representació abstracta de fitxers, crear-los, esborrar-los, canv
 Podem invocar de diverses maneres al constructor de la classe amb un arxiu determinat, donada la seva ruta completa. Per exemple, si es tracta del fitxer "\docs\carta.doc":
 
 ```java
-File unArxiu = new File(“\docs\carta.doc”);
-File unArxiu = new File(“\docs”, “carta.doc”);
-File unDir = new File(“\docs”);
-File unArxiu = new File(unDir, “carta.doc”);
+File unArxiu = new File("\docs\carta.doc");
+File unArxiu = new File("\docs", "carta.doc");
+File unDir = new File("\docs");
+File unArxiu = new File(unDir, "carta.doc");
 ```
 
 Les taules següents reuneixen els principals mètodes de la classe *File*:

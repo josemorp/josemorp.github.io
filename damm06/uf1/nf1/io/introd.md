@@ -24,6 +24,8 @@ Mètodes útils proporcionats per la classe ***InputStream***:
 | public byte[] readANBytes(int len) throws IOException     | llegeix el nombre de bytes especificat    |
 | public long transferTo(OutputStream out) throws IOException     | llegeix tots els bytes del stream i els escriu a l'especificat; retorna el nombre de bytes transferits  |
 
+
+
 ```java
 /**
  * reads a list of byte from file
@@ -59,6 +61,8 @@ Mètodes útils proporcionats per la classe ***OutputStream***:
 | public void write(byte[] b, int off, int len) throws IOException     | escriu un array de bytes des de la posició 'off' amb longitud 'len'  | 
 | public void flush() throws IOException     | descarrega el buffer del stream   |
 | public void close()throws IOException     |  tanca el recurs    |
+
+
 
 ```java
 /**
@@ -113,6 +117,8 @@ Mètodes útils proporcionats per la classe ***Reader***:
 | public int read(char[] b) throws IOException     | llegeix array de caràcters, retorna el nombre de caràcters llegits o -1 si s'arriba al final del fitxer   |
 | public long transferTo(Writer out) throws IOException     | llegeix tots els caràcters del stream i els escriu a l'especificat; retorna el nombre de caràcters transferits  |
 
+
+
 ```java
 /**
  * writes a list of characters to file
@@ -145,6 +151,8 @@ Mètodes útils proporcionats per la classe ***Writer***:
 | public void write(byte[] b, int off, int len) throws IOException     | escriu un array de bytes des de la posició 'off' amb longitud 'len'  | 
 | public void flush() throws IOException     | descarrega el buffer del stream   |
 | public void close()throws IOException     |  tanca el recurs    |
+
+
 
 ```java
 /**
