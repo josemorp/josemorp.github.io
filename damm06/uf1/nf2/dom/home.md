@@ -47,4 +47,15 @@ Per obtenir un conjunt de nodes disposem de mètodes com **getChildNodes()* o **
 
 ![Estructura DOM d'un document XML](/damm06/assets/1.2/domgraph.png)
 
+## Exemples
+
+[Mostrar elements de fitxer xml: Staff (versió recursiva)](/damm06/assets/1.2/staffxmldom.zip)
+
+[Exemple de definició d'esquema XML (XSD): Agenda](/damm06/assets/1.2/agenda-xml_xsd.zip)
+
+[Exemple lectura DOM immobiliària amb GUI: RealEstate](/damm06/assets/1.2/realestatedomgui.zip)
+
+## Exercicis
+
+[Aplicació lectura amb DOM de les dades d'una escola](/damm06/assets/1.2/schooldomap.zip). Cal completar les funcionalitats del prototip.
 
