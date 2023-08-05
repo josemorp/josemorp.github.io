@@ -1195,3 +1195,214 @@ Exercici proposat:
 1. Completar totes les funcionalitats possibles de l'aplicació. Assegurar que es proven totes les funcionalitats tenint en compte tots els fluxos alternatius de cada una d'elles, de manera que es controlin adequadament tots els errors.
 2. Modificar el codi de manera que el control d'errors es faci mitjançant excepcions.
 
+## Tractament d'errors d'accés a base de dades
+
+### Pas de SQLException per capturar-les a la capa de presentació o al controlador
+
+Una opció interessant per al tractament de les excepcions d'accés a dades és no capturar-les als DAO i deixar que sigui la capa de control la que les capturi, decideixi el tractament que és convenient i prepari la informació per a l'usuari.
+
+En aquest cas, caldrà modificar els mètodes de les classes DAO, suprimint els catch de [SQLException](https://docs.oracle.com/en/java/javase/19/docs/api/java.sql/java/sql/SQLException.html) i afegint-los la declaració de pas de l'excepció. Per exemple, per al mètode insert(), quedaria així:
+
+```java
+    public int insert(Category category) throws SQLException {
+        int result = 0;
+        //get a connection and perform query
+            Connection conn = dbConnect.getConnection();
+            String query = "insert into categories values (null, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(query);
+            st.setString(1, category.getCode());
+            st.setString(2, category.getName());
+            result = st.executeUpdate(); 
+            //close resources  
+            st.close();
+            conn.close()     
+        return result;
+    }
+ ```
+A la classe del model (servei de dades) caldrà afegir a cada mètode també la declaració de pas de l'excepció:
+
+```java
+    public int addCategory(Category category) throws SQLException {
+        int result = 0;
+       if (category != null) { 
+           //perform proper validations before attempting insertion
+           boolean dataValid = true;
+           String code = category.getCode();
+           if (code==null) dataValid = false; //code must not be null
+           else { //assess that code does not exist
+               Category c = categoryDao.selectWhereCode(code);
+               if (c != null) dataValid = false;
+           }
+           if (dataValid) {  //perform insertion
+               result = categoryDao.insert(category);
+           }
+       }
+        result = categoryDao.insert(category);
+        return result;
+    }
+```
+
+Per poder fer proves d'insercions amb codis existents, cal comentar provisionalment les línies anteriors que verifiquen si el codi existeix.
+
+I, per últim, als mètodes de control caldrà afegir un *try-catch* per tractar aquesta excepció:
+
+```java
+    /**
+     * reads from user the data for a new category and adds it to database
+     */
+    public void doAddCategory() {
+        Category cat = doInputCategory();
+        String message="";
+        if (cat != null) {
+            try {
+                int result = model.addCategory(cat);
+                message = (result == 1) ? "Successfully added" : "Not added";
+                doAlert(message);                
+            } catch (SQLException e) {
+                //determine, if needed, the especific cause of exception
+                if (e.getSQLState().startsWith("23")) {  //constraint violation
+                    message = String.format("Category not added because code %s already exists\n", cat.getCode());
+                }
+                //TODO: maybe consider other causes
+            }
+        } else {
+            message = "Error validating data";
+        }
+        doAlert(message);
+    }
+```
+
+La classe SQLException té dos mètodes que ens ajuden a determinar la causa de l'error:
+
+ * int getErrorCode(): codi del proveïdor del SGBD per a l'error que s'ha produït
+ * String getSQLState(): [SQLSTATE](https://en.wikipedia.org/wiki/SQLSTATE) de l'error
+
+Els següents enllaçs contenen informació sobre els codis estàndar d'errors de SQL:
+
+[SQLSTATE a wikipedia](https://en.wikipedia.org/wiki/SQLSTATE)
+
+[SQLstate messages](https://www.ibm.com/docs/en/db2woc?topic=messages-sqlstate)
+
+[Errors MySql i relació amb SQLSTATE](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-error-sqlstates.html)
+
+
+### Silenciament de SQLException i llançament d'excepcions pròpies
+
+Implementarem ara un exemple millorat de tractament dels errors de SQL que no obligui a passar les excepcions *SQLException* de la capa d'accés a dades fins al controlador.
+
+Definim una excepció pròpia específica del nostre programa que contingui un atribut *status* (o el nom que ens convingui) amb informació de què ha passat.
+
+```java
+public class CategProdException extends RuntimeException {
+
+    private String status;
+    
+    public CategProdException() {
+        super();
+    }
+
+    public CategProdException(String message, String status) {
+        super(message);
+        this.status = status;
+    }
+
+    public CategProdException(String message, Throwable cause, String status) {
+        super(message, cause);
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CategProdException{");
+        sb.append("[").append(super.toString()).append("]");
+        sb.append("[status=").append(status).append("]");
+        sb.append('}');
+        return sb.toString();
+    }
+    
+}
+```
+
+Podem escollir com a superclasse de la nostra excepció *Exception* o *RuntimeException*. Hem escollit la segona opció perquè són del tipus no verificades (*non-checked*). D'aquesta manera ens estalviem declarar-la a tots els mètodes pels que passa sense ser capturada, per conveniència de l'exemple. No ens hem d'oblidar, però, de la necessitat de capturar-la en algun lloc per donar el tractament adequat i evitar que el programa falli.
+
+Modifiquem els mètodes de les classes DAO per silenciar l'excepció SQL i llançar-ne una de pròpia. A continuació es mostra, com a exemple, el mètode *insert()*:
+
+```java
+    public int insert(Category category) {
+        int result = 0;
+        //get a connection and perform query
+        try ( Connection conn = dbConnect.getConnection()) {
+            String query = "insert into categories values (null, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(query);
+            st.setString(1, category.getCode());
+            st.setString(2, category.getName());
+            result = st.executeUpdate();
+        } catch (SQLException ex) {
+            //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            //throw our exception
+            throw new CategProdException("SQL insert error", ex, ex.getSQLState());
+        }        
+        return result;
+    }
+ ```
+L'atribut *status* de l'excepció conté el codi ***SQLSTATE*** de l'excepció que s'havia llançat.
+
+Capturem l'excepció al controlador, verificant el codi (status) per decidir el missatge a l'usuari:
+
+```java
+    /**
+     * reads from user the data for a new category and adds it to database
+     */
+    public void doAddCategory() {
+        Category cat = doInputCategory();
+        String message="";
+        if (cat != null) {
+            try {
+                int result = model.addCategory(cat);
+                message = (result == 1) ? "Successfully added" : "Not added";
+                doAlert(message);                
+            } catch (CategProdException e) {
+                //determine,if needed, the especific cause of exception
+                if (e.getStatus().startsWith("23")) {  //constraint violation
+                    message = String.format("Category not added because code %s already exists\n", cat.getCode());
+                }
+                //TODO: maybe consider other causes
+            }
+        } else {
+            message = "Error validating data";
+        }
+        doAlert(message);
+    }
+```
+
+Al model, suprimim les comprovacions de codi existents per provocar així l'error i provar el funcionament de la captura:
+
+```java
+    public int addCategory(Category category) {
+        int result = 0;
+//        if (category != null) { 
+//            //perform proper validations before attempting insertion
+//            boolean dataValid = true;
+//            String code = category.getCode();
+//            if (code==null) dataValid = false; //code must not be null
+//            else { //assess that code does not exist
+//                Category c = categoryDao.selectWhereCode(code);
+//                if (c != null) dataValid = false;
+//            }
+//            if (dataValid) {  //perform insertion
+//                result = categoryDao.insert(category);
+//            }
+//        }
+        result = categoryDao.insert(category);
+        return result;
+    }
+```
