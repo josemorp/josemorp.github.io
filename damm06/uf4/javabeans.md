@@ -8,6 +8,10 @@ L'especificació de JavaBeans els defineix com "components de programari reutili
 
 Tot i haver-hi moltes semblances, els JavaBeans no s'han de confondre amb els Enterprise JavaBeans (EJB), una tecnologia de components de la banda servidor que és part de Java EE.
 
+[Javabeans tutorial](http://docs.oracle.com/javase/tutorial/javabeans/index.html)
+
+[Java EE 6 tutorial](/damm06/assets/4.1/javaeetutorial6.pdf)
+
 ## Especificacions dels JavaBeans
 
 Per funcionar com un JavaBean, una classe ha d'obeir certes especificacions sobre nomenclatura de mètodes, construcció i comportamen, les quals permeten tenir eines que puguin utilitzar, reutilitzar, substituir i connectar JavaBeans:
@@ -681,10 +685,10 @@ Codi complet de l'exemple: [javabeansevents.zip](/damm06/assets/4.1/javabeanseve
 
 Seguiu pas a pas aquest tutorial de com crear un bean gràfic i interactuar amb ell.
 
-[FaceBean.zip](https://docencia.proven.cat/jmoreno/docencia_public/dam2-m06/dam2_m06_a411/FaceBean.zip), [FaceFrame.zip]([https://docencia.proven.cat/jmoreno/docencia_public/dam2-m06/dam2_m06_a411/FaceFrame.zip), [Biblioteca BeansBinding](/damm06/assets/4.1/jar_files.zip)
+[FaceBean.zip](/damm06/assets/4.1/FaceBean.zip)), [FaceFrame.zip](/damm06/assets/4.1/FaceFrame.zip), [Biblioteca BeansBinding](/damm06/assets/4.1/jar_files.zip)
 
 ### Llista amb punt d'interès com a JavaBean
 
-[[docencia:dam:m06:uf4:nf1:scrollablelist|Llista amb punt d'interès]]
+[Llista amb punt d'interès](/damm06/assets/4.1/scrollablelist.zip)
 
 

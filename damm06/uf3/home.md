@@ -14,15 +14,14 @@
 **Java API XMLDB**
 
   * [Writing Java applications with XMLDB API](/damm06/assets/3.1/exist-writing_java_applications_with_xmldb-api.pdf)
-  * [XML:DB API](https://github.com/xmldb-org/xmldb-api|)
+  * [XML:DB API](https://github.com/xmldb-org/xmldb-api)
 
 **Java API XQJ**
 
   * [XQJ: XQuery API for Java](http://xqj.net)
   * [XQJ tutorial](/damm06/assets/3.1/xqj-tutorial.pdf)
 
-[Biblioteques XQJ a importar per programar amb Java i eXistdB](https://github.com/xmldb-org/xmldb-api|)
-
+[Biblioteques XQJ a importar per programar amb Java i eXistdB](https://github.com/xmldb-org/xmldb-api)
 
 
 ## Exemples
@@ -49,7 +48,7 @@ return data($x/title)
 
 ### ExistDb update extension
 
-[Documentació](https://exist-db.org/exist/apps/doc/update_ext)
+[XQuery Update Extension](https://exist-db.org/exist/apps/doc/update_ext)
 
 ```xml
 xquery version "3.1";

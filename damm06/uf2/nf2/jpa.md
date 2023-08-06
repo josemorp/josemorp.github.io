@@ -6,3 +6,8 @@
 
 ![](/damm06/assets/2.2/jpaentitystates.png)
 
+## Exemples
+
+[Entitats amb relació 1xn](jpa-relacio1xn.md)
+
+[Entitats amb relació mxn](jpa-relaciomxn.md)
