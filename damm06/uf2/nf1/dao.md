@@ -1,10 +1,8 @@
-# Connexió a bases dades. Model connectat. Resultset
-
-[Apunts de connexió a bases de dades](/damm06/assets/2.1/connexio_amb_bases_de_dades.pdf)
-
-## Accés a dades utilitzant el patró Data Access Object (DAO)
+# Connexió a bases dades. Patró DAO
 
 Anem a il·lustrar com construir una capa d'accés a dades aplicant el patró [DAO](https://en.wikipedia.org/wiki/Data_access_object).
+
+![](/damm06/assets/2.1/refactor-area51.jpg)
 
 Segons aquest patró, cal una classe DAO per a cada entitat del nostre model de dades, així com també per a les relacions mxn.
 
