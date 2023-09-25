@@ -14,7 +14,7 @@
 
 ## Patrons d'arquitectura
 
-[[https://es.wikipedia.org/wiki/Patrones_de_arquitectura|Patrons d'Arquitectura]]
+[Patrons d'Arquitectura](https://es.wikipedia.org/wiki/Patrones_de_arquitectura)
 
 ![mi_codigo_funciona_porque.jpg](/damm06/assets/0.1/mi_codigo_funciona_porque.jpg)
 
