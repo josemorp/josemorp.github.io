@@ -1,7 +1,7 @@
 # Patrons de disseny d'aplicacions
 
 * Una arquitectura senzilla: Front-end i Back-end.
-* Arquitectura client-servidor. [[wp>Client–server_model]]
+* Arquitectura client-servidor. [Client-server model](https://en.wikipedia.org/wiki/Client%E2%80%93server_model)
 
 ## Patrons de disseny: tipus
 
