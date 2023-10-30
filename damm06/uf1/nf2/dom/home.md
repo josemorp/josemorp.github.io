@@ -57,6 +57,10 @@ Per obtenir un conjunt de nodes disposem de mètodes com **getChildNodes()* o **
 
 [Exemple lectura DOM immobiliària amb GUI: RealEstate](/damm06/assets/1.2/realestatedomgui.zip)
 
+## Introducció de l'arquitectura Model-Vista-Controlador
+
+[MVC](../../../uf0-commons/patterns/mvc.md)
+
 ## Exercicis
 
 [Aplicació lectura amb DOM de les dades d'una escola](/damm06/assets/1.2/schooldomap.zip). Cal completar les funcionalitats del prototip.
