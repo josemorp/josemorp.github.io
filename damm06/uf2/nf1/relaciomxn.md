@@ -709,3 +709,5 @@ Per fer les consultes creuades, crearem al Model mètodes que utilizin les class
 ```
 
 Exercici: A partir del codi mostrat, cal completar les consultes que falten.
+
+Versió de l'aplicacio 'flightspassengers' amb DAO genèric, repository d'accés a dades i reflection. [flightspassengers.zip](/damm06/assets/2.1/flightspassengers.zip)
