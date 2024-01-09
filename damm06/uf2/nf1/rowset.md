@@ -1,10 +1,35 @@
-# UF2-NF1. Model desconnectat: RowSet
+# UF2-NF1. La interfície RowSet
 
+La interface [RowSet](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/javax/sql/RowSet.html) afegeix a l'API JDBC suport per al model de components de JavaBeans.
+
+Un RowSet conté propietats que li permeten establir connexió amb una base de dades (url, usuari, password, etc.) així com l'ordre (*command*) que utilitza per a obtenir les dades de la base de dades.
+
+A més, dona suport per a gestió d'esdeveniments de Javabeans, habilitant que altres components de l'aplicació puguin ser notificats quan un esdeveniment es produeix al rowset, per exemple, canvis en les dades.
+
+Hi ha dos tipus de RowSet: **connectat** i **desconnectat**.
+
+Un *rowset* connectat pot establir una connexió amb una base de dades i mantenir aquesta connexió al llarg del seu cicle de vida. 
+
+Un *rowset* desconnectat pot establir una connexió amb una base de dades, obtenir dades de la base de dades i tancar la connexió. Mentre està desconnectat, permet fer canvis en les dades i enviar posteriorment aquests canvis a la base de dades, previ establiment de la connexió a través del SyncProvider. Per obtenir les dades de la base de dades disposa d'un **RowSetReader** i per propagar els canvis cap a la base de dades disposa d'un **RowSetWriter**.
+
+La interfície RowSet exten la interfície *java.sql.ResultSet*. Per obtenir metadades sobre les dades obtingudes a la consulta conté la interfície **RowSetMetaData**, la qual és extensió de la *java.sql.ResultSetMetaData*.
+
+RowSet té, entre altres les següents subinterfícies:
+
+* [JdbcRowSet](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql.rowset/javax/sql/rowset/JdbcRowSet.html)
+* [CachedRowSet](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql.rowset/javax/sql/rowset/CachedRowSet.html)
+* [JoinRowSet](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql.rowset/javax/sql/rowset/JoinRowSet.html)
 [Using CachedRowSet](/damm06/assets/2.1/using_cachedrowseet.pdf)
 
-[CachedRowSet: Java documentation](https://docs.oracle.com/javase/tutorial/jdbc/basics/cachedrowset.html)
+Només JdbcRowSet és connectat.
 
 ## Exemple amb CachedRowSet: base de dades de països
+
+Un CachedRowSet és un contenidor de files en memòria que permet operar amb les dades sense connexió amb la base de dades. És un component Javabeans i és recorrible, actualitzable i serialitzable.
+
+Normalment conté files provinents d'un ResulSet, però també podria contenir files de fitxers amb estructura tabular, tipus full de càlcul, extenent la implementaciód el SyncProvider.
+
+[CachedRowSet: Java documentation](https://docs.oracle.com/javase/tutorial/jdbc/basics/cachedrowset.html)
 
 Codi sql per a la base de dades: **db_country.sql**
 
@@ -664,3 +689,192 @@ public class CachedRowSetMain {
 ```
 
 [Codi complet de l'exemple](/damm06/assets/2.1/countries-catchedrowset.zip)
+
+## Exemple amb JoinRowSet
+
+La interfície **JoinRowSet** (subinterfície de ***WebRowSet***, la qual extén ***CachedRowSet***) representa un *SQL JOIN* entre diferents *RowSet*. Permet establir les columnes de relació entre ells.
+
+Codi sql per a la base de dades: 
+
+```sql
+CREATE USER 'storeusr'@'localhost' IDENTIFIED BY 'storepsw';
+CREATE DATABASE storedb
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+GRANT SELECT, INSERT, UPDATE, DELETE ON storedb.* TO 'storeusr'@'localhost';
+USE storedb;
+CREATE TABLE `categories` (
+    `id` INT(4) NOT NULL AUTO_INCREMENT,
+    `code` VARCHAR(10) NOT NULL UNIQUE,
+    `name` VARCHAR(20) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+CREATE TABLE `products` (
+    `id` INT(4) NOT NULL AUTO_INCREMENT,
+    `code` VARCHAR(10) NOT NULL UNIQUE,
+    `name` VARCHAR(20) NOT NULL,
+    `stock` INT DEFAULT 0,
+    `price` DOUBLE DEFAULT 0.0,
+    `category_id` INT(4),
+    PRIMARY KEY (`id`)
+);
+ALTER TABLE `products` 
+    ADD CONSTRAINT `fk_category` FOREIGN KEY (category_id) 
+    REFERENCES categories(id)
+    ON UPDATE CASCADE ON DELETE RESTRICT;
+INSERT INTO categories VALUES 
+    (1, "C01", "category01"),
+    (2, "C02", "category02"),
+    (3, "C03", "category03"),
+    (4, "C04", "category04"),
+    (5, "C05", "category05"),
+    (6, "C06", "category06");
+INSERT INTO products VALUES 
+    (1, "P01", "product01", 101, 1001.0, 1),
+    (2, "P02", "product02", 102, 1002.0, 2),
+    (3, "P03", "product03", 103, 1003.0, 3),
+    (4, "P04", "product04", 104, 1004.0, 4),
+    (5, "P05", "product05", 105, 1005.0, 5),
+    (6, "P06", "product06", 106, 1006.0, 1),
+    (7, "P07", "product07", 107, 1007.0, 1),
+    (8, "P08", "product08", 108, 1008.0, 2),
+    (9, "P09", "product09", 109, 1009.0, 3);
+```
+
+Codi java de l'exemple **RsTest.java**:
+
+```java
+import javax.sql.rowset.*;
+import javax.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import cat.proven.categprods.model.persist.DbConnect;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author ProvenSoft
+ */
+public class RsTest {
+    
+    private CachedRowSet rowSet1;
+    private CachedRowSet rowSet2;
+    private JoinRowSet joinRowSet;
+   
+    public static void main(String[] args) throws ClassNotFoundException {
+       RsTest main = new RsTest();
+       main.start();
+    }
+ 
+    private void start() throws ClassNotFoundException {
+        try {
+            //load database driver
+            DbConnect.loadDriver();
+            //get a RowSet Factory
+            RowSetFactory rsFactory = RowSetProvider.newFactory();
+            //
+            //create a CachedRowSet
+            rowSet1 = rsFactory.createCachedRowSet();
+            //configure connection properties for RowSet
+            rowSet1.setUsername(DbConnect.USER);
+            rowSet1.setPassword(DbConnect.PASSWORD);
+            rowSet1.setUrl(DbConnect.BD_URL);
+            String query1 = "select * from categories where id in (?, ?)";
+            rowSet1.setCommand(query1);
+            rowSet1.setInt(1, 2);
+            rowSet1.setInt(2, 5);
+            //execute query to populate RowSet
+            rowSet1.execute();
+            //display RowSet content
+            System.out.println("RowSet1");
+            showRowSet(rowSet1);
+            //
+            //create a CachedRowSet
+            rowSet2 = rsFactory.createCachedRowSet();
+            //configure connection properties for RowSet
+            rowSet2.setUsername(DbConnect.USER);
+            rowSet2.setPassword(DbConnect.PASSWORD);
+            rowSet2.setUrl(DbConnect.BD_URL);
+            String query2 = "select * from products";
+            rowSet2.setCommand(query2);
+            //execute query to populate RowSet
+            rowSet2.execute();
+            //display RowSet content
+            System.out.println("RowSet2");
+            showRowSet(rowSet2);
+            //
+            //create a JoinRowSet
+            joinRowSet = rsFactory.createJoinRowSet();
+            joinRowSet.setJoinType(JoinRowSet.INNER_JOIN);
+            //configure connection properties for RowSet
+            joinRowSet.setUsername(DbConnect.USER);
+            joinRowSet.setPassword(DbConnect.PASSWORD);
+            joinRowSet.setUrl(DbConnect.BD_URL);
+            //add RowSets to JoinRowSet defining also math colum for join
+            joinRowSet.addRowSet(rowSet1, "id");
+            joinRowSet.addRowSet(rowSet2, "category_id");
+            //display RowSet content
+            showRowSet(joinRowSet);
+            joinRowSet.first();
+            //try to make changes in JoinRowSet
+            changeRs(joinRowSet);
+            commitToDatabase(joinRowSet);  //NOTE: this doesn't work: cannot stablish a connection to database!
+        } catch (SQLException ex) {
+            Logger.getLogger(RsTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void showRowSet(CachedRowSet rs) throws SQLException {
+        RowSetMetaData rsmd = (RowSetMetaData)rs.getMetaData();
+        System.out.print("[");
+        for (int i=1; i<=rsmd.getColumnCount(); i++) {
+            System.out.format("(%s)", rsmd.getColumnName(i));
+        }
+        System.out.println("]");
+        StringBuilder sb = new StringBuilder();
+        while (rs.next()) {
+            sb.append("[");
+            for (int i=0; i<rsmd.getColumnCount(); i++) {
+                sb.append("(").append(rs.getObject(i+1)).append(")");
+            }
+            sb.append("]\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    private void changeRs(JoinRowSet rs) throws SQLException {
+        rs.updateString("name", "nova");
+        rs.updateRow();
+    }
+    
+   public boolean commitToDatabase(CachedRowSet rs) {
+        boolean b;
+        try ( Connection conn = getConnection(rs, false)) {
+            // propagate changes and close connection
+            rs.acceptChanges(conn);
+            // reload data.
+            rs.execute();
+            b = true;
+        } catch (SQLException se) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, se);
+            b = false;
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
+            b = false;
+        }
+        return b;
+    } 
+
+    public Connection getConnection(RowSet rs, boolean autocommit) throws SQLException {
+        Connection conn = DriverManager.getConnection(rs.getUrl(), rs.getUsername(), rs.getPassword());
+        conn.setAutoCommit(autocommit);
+        return conn;
+    }
+   
+}
+```
